@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlexShield Solutions — Executive Financial Intelligence Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{
+  --bg-main:#060E1A;--bg-panel:#0A1628;--bg-card:#0D1D36;--bg-card2:#102040;
+  --border:#1E3554;--border2:#243D60;
+  --text-main:#E8F2FF;--text-muted:#7A9CBF;--text-soft:#B8D0E8;
+  --revenue:#3B9EFF;--profit:#00C896;--margin:#FFB020;
+  --loss:#FF4B4B;--warning:#FF9F43;
+  --cat1:#3B9EFF;--cat2:#00C896;--cat3:#FFB020;--cat4:#C084FC;
+  --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg-main);color:var(--text-main);font-family:var(--font-body);min-width:1280px;overflow-x:auto;}
+
+/* === HEADER === */
+.dash-header{
+  background:linear-gradient(135deg,#040A14 0%,#081220 50%,#0A1830 100%);
+  border-bottom:1px solid var(--border2);
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-area{display:flex;align-items:center;gap:14px;}
+.logo-mark{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--revenue) 0%,#1255AA 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;letter-spacing:-1px;
+}
+.brand-text h1{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text-main);letter-spacing:-0.3px;}
+.brand-text p{font-size:10px;color:var(--text-muted);margin-top:3px;letter-spacing:0.5px;text-transform:uppercase;}
+.header-right{text-align:right;}
+.header-badge{
+  display:inline-block;background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.25);
+  border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;
+  color:var(--revenue);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:5px;
+}
+.header-right p{font-size:10px;color:var(--text-muted);}
+.header-platforms{display:flex;gap:5px;margin-top:5px;justify-content:flex-end;}
+.plat-pill{
+  padding:2px 8px;border:1px solid var(--border2);border-radius:3px;
+  font-size:8px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;
+}
+
+/* === CREDIBILITY STRIP === */
+.cred-strip{
+  background:rgba(59,158,255,0.04);border-bottom:1px solid var(--border);
+  padding:9px 32px;display:flex;align-items:center;gap:28px;overflow:hidden;
+}
+.cred-item{display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.cred-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.cred-label{font-size:10px;color:var(--text-muted);}
+.cred-label strong{color:var(--text-soft);font-weight:600;}
+.cred-tagline{margin-left:auto;font-size:9px;color:var(--border2);font-style:italic;}
+
+/* === FILTER BAR === */
+.filter-bar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,22,40,0.97);border-bottom:1px solid var(--border2);
+  padding:10px 32px;display:flex;align-items:center;gap:16px;
+  backdrop-filter:blur(12px);
+}
+.filter-group{display:flex;align-items:center;gap:7px;}
+.filter-label{font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;white-space:nowrap;}
+.pills{display:flex;gap:3px;}
+.pill{
+  padding:4px 9px;border-radius:4px;border:1px solid var(--border2);
+  background:transparent;color:var(--text-muted);font-family:var(--font-body);
+  font-size:10px;font-weight:500;cursor:pointer;transition:all 0.15s;
+}
+.pill:hover{border-color:var(--revenue);color:var(--text-main);}
+.pill.active{background:rgba(59,158,255,0.15);border-color:var(--revenue);color:var(--revenue);font-weight:600;}
+.filter-select{
+  background:var(--bg-card);border:1px solid var(--border2);border-radius:4px;
+  color:var(--text-main);font-family:var(--font-body);font-size:10px;padding:4px 7px;cursor:pointer;
+}
+.filter-sep{width:1px;height:20px;background:var(--border2);flex-shrink:0;}
+.filter-meta{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.record-count{font-size:10px;color:var(--text-muted);}
+.record-count span{color:var(--revenue);font-weight:700;}
+.active-count{
+  padding:2px 7px;border-radius:10px;background:rgba(59,158,255,0.12);
+  border:1px solid rgba(59,158,255,0.25);font-size:9px;font-weight:700;color:var(--revenue);
+}
+.btn-reset{
+  padding:4px 10px;border-radius:4px;border:1px solid var(--border2);
+  background:transparent;color:var(--text-muted);font-family:var(--font-body);
+  font-size:10px;cursor:pointer;transition:all 0.15s;
+}
+.btn-reset:hover{border-color:var(--loss);color:var(--loss);}
+
+/* === KPI SECTION === */
+.kpi-section{
+  padding:24px 32px 18px;
+  display:grid;grid-template-columns:1.5fr 1.5fr 1fr 1fr 1fr 1fr;gap:14px;
+}
+.kpi-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 14px;position:relative;overflow:hidden;
+  transition:transform 0.15s,border-color 0.15s;
+}
+.kpi-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent,var(--revenue));border-radius:12px 12px 0 0;
+}
+.kpi-label{font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:8px;}
+.kpi-value{
+  font-family:var(--font-display);font-weight:800;line-height:1;
+  color:var(--text-main);margin-bottom:7px;
+}
+.kpi-hero .kpi-value{font-size:52px;}
+.kpi-card:not(.kpi-hero) .kpi-value{font-size:36px;}
+.kpi-delta{font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:5px;}
+.pos{color:var(--profit);}
+.neg{color:var(--loss);}
+.warn{color:var(--warning);}
+.kpi-sublabel{font-size:9px;color:var(--text-muted);}
+canvas.spark{width:100%;height:30px;margin-top:10px;opacity:0.75;}
+
+/* === MAIN GRID === */
+.dash-body{padding:0 32px;display:flex;flex-direction:column;gap:14px;}
+.row{display:grid;gap:14px;}
+.r1{grid-template-columns:1fr;}
+.r3{grid-template-columns:1fr 1.6fr 1fr;}
+.r2{grid-template-columns:1fr 1fr;}
+.r21{grid-template-columns:1.6fr 1fr;}
+.r12{grid-template-columns:1fr 1.6fr;}
+
+/* === CHART CARD === */
+.cc{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+}
+.cc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.cc-title{font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--text-main);}
+.cc-sub{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.cc-badge{
+  padding:2px 7px;border-radius:3px;border:1px solid;
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;
+}
+.badge-critical{color:var(--loss);border-color:rgba(255,75,75,0.3);background:rgba(255,75,75,0.08);}
+.badge-info{color:var(--revenue);border-color:rgba(59,158,255,0.3);background:rgba(59,158,255,0.08);}
+.badge-ok{color:var(--profit);border-color:rgba(0,200,150,0.3);background:rgba(0,200,150,0.08);}
+.cw{position:relative;}
+
+/* === LEGEND === */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px;justify-content:center;}
+.li{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text-muted);}
+.ls{width:9px;height:9px;border-radius:2px;}
+
+/* === CATEGORY TABLE === */
+.cat-table{margin-top:10px;}
+.cat-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid rgba(30,53,84,0.35);font-size:10px;
+}
+.cat-row:last-child{border-bottom:none;}
+
+/* === SHIPPING TABLE === */
+.ship-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:10px;}
+.ship-table th{
+  text-align:left;padding:5px 6px;color:var(--text-muted);
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;
+  border-bottom:1px solid var(--border);
+}
+.ship-table td{padding:6px 6px;color:var(--text-soft);border-bottom:1px solid rgba(30,53,84,0.35);}
+.ship-table tr:last-child td{border-bottom:none;}
+
+/* === ALERT BOX === */
+.alert-box{
+  background:rgba(255,75,75,0.06);border:1px solid rgba(255,75,75,0.2);
+  border-radius:7px;padding:10px 14px;margin-top:10px;
+}
+.ab-title{font-size:9px;font-weight:800;color:var(--loss);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.ab-text{font-size:10px;color:var(--text-soft);line-height:1.55;}
+
+/* === HEATMAP === */
+.hm-region-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.hm-label{width:68px;font-size:8px;color:var(--text-muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hm-cell{
+  flex:1;height:19px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;cursor:default;transition:opacity 0.12s;
+}
+.hm-cell:hover{opacity:0.8;}
+.hm-header{display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+.hm-header-label{width:68px;flex-shrink:0;}
+.hm-header-cell{flex:1;text-align:center;font-size:8px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;}
+
+/* === INSIGHTS === */
+.insights-wrap{padding:0 32px 4px;}
+.insights-title{
+  font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:10px;
+}
+.insights-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.ic{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:10px;
+  padding:14px;border-left:3px solid;transition:transform 0.15s;
+}
+.ic:hover{transform:translateY(-2px);}
+.ic.success{border-left-color:var(--profit);}
+.ic.alert{border-left-color:var(--loss);}
+.ic.warning{border-left-color:var(--warning);}
+.ic.info{border-left-color:var(--revenue);}
+.ic-icon{
+  width:26px;height:26px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:13px;margin-bottom:8px;
+}
+.ic-icon.success{background:rgba(0,200,150,0.1);}
+.ic-icon.alert{background:rgba(255,75,75,0.1);}
+.ic-icon.warning{background:rgba(255,159,67,0.1);}
+.ic-icon.info{background:rgba(59,158,255,0.1);}
+.ic-title{font-size:10px;font-weight:600;color:var(--text-main);line-height:1.35;margin-bottom:6px;}
+.ic-text{font-size:9px;color:var(--text-muted);line-height:1.6;margin-bottom:7px;}
+.ic-action{font-size:8px;font-weight:700;color:var(--revenue);letter-spacing:0.3px;}
+
+/* === FOOTER === */
+.dash-footer{
+  border-top:1px solid var(--border);padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;margin-top:10px;
+}
+.footer-left{font-size:10px;color:var(--text-muted);line-height:1.6;}
+.footer-left strong{color:var(--text-main);}
+.footer-left span{color:var(--revenue);}
+.footer-platforms{display:flex;gap:6px;}
+.fp{padding:4px 10px;border:1px solid var(--border2);border-radius:4px;font-size:8px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;}
+.btn-export{
+  padding:9px 22px;border-radius:7px;border:1px solid var(--revenue);
+  background:rgba(59,158,255,0.08);color:var(--revenue);
+  font-family:var(--font-body);font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;
+}
+.btn-export:hover{background:var(--revenue);color:#fff;}
+.ref-note{text-align:center;font-size:9px;color:var(--border2);margin-top:6px;font-style:italic;}
+
+/* === PRINT === */
+@media print{
+  .filter-bar,.cred-strip,.btn-export,.dash-footer,.insights-wrap{display:none!important;}
+  body{background:#fff!important;color:#000!important;min-width:auto!important;}
+  .dash-header{background:#1a2744!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  .kpi-card,.cc,.ic{background:#f4f7fb!important;border-color:#dee2e6!important;}
+  .kpi-value{color:#111!important;}
+  .kpi-label,.cc-sub,.ic-text{color:#555!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================= HEADER ============================= -->
+<header class="dash-header">
+  <div class="logo-area">
+    <div class="logo-mark">FS</div>
+    <div class="brand-text">
+      <h1>FlexShield Solutions — Executive Financial Intelligence Dashboard</h1>
+      <p>Interactive Board Presentation &nbsp;·&nbsp; Financial Performance · Profitability · Risk &amp; Strategic Insight</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">Confidential — Board Use Only</div>
+    <p id="hdrDate">Retail Sector Analytics · FY 2018–2021</p>
+    <div class="header-platforms">
+      <div class="plat-pill">Power BI</div><div class="plat-pill">Grafana</div>
+      <div class="plat-pill">Tableau</div><div class="plat-pill">Jaspersoft</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================= CRED STRIP ============================= -->
+<div class="cred-strip">
+  <div class="cred-item"><div class="cred-dot" style="background:var(--revenue)"></div><div class="cred-label"><strong>Financial-Sector BI Expertise</strong></div></div>
+  <div class="cred-item"><div class="cred-dot" style="background:var(--profit)"></div><div class="cred-label"><strong>Executive Reporting &amp; Board Packs</strong></div></div>
+  <div class="cred-item"><div class="cred-dot" style="background:var(--margin)"></div><div class="cred-label"><strong>Multi-Platform Delivery</strong></div></div>
+  <div class="cred-item"><div class="cred-dot" style="background:var(--cat4)"></div><div class="cred-label"><strong>Management Intelligence &amp; Decision Support</strong></div></div>
+  <div class="cred-item"><div class="cred-dot" style="background:var(--warning)"></div><div class="cred-label"><strong>Risk &amp; Profitability Analytics</strong></div></div>
+  <div class="cred-tagline">"Delivering strategic BI clarity across financial markets"</div>
+</div>
+
+<!-- ============================= FILTER BAR ============================= -->
+<div class="filter-bar">
+  <div class="filter-group">
+    <span class="filter-label">Year</span>
+    <div class="pills" id="yrPills">
+      <button class="pill active" data-yr="All">All</button>
+      <button class="pill" data-yr="2018">2018</button>
+      <button class="pill" data-yr="2019">2019</button>
+      <button class="pill" data-yr="2020">2020</button>
+      <button class="pill" data-yr="2021">2021</button>
+    </div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Region</span>
+    <div class="pills" id="regPills">
+      <button class="pill active" data-reg="All">All</button>
+      <button class="pill" data-reg="East">East</button>
+      <button class="pill" data-reg="West">West</button>
+      <button class="pill" data-reg="Central">Central</button>
+      <button class="pill" data-reg="South">South</button>
+    </div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Segment</span>
+    <div class="pills" id="segPills">
+      <button class="pill active" data-seg="All">All</button>
+      <button class="pill" data-seg="Consumer">Consumer</button>
+      <button class="pill" data-seg="Corporate">Corporate</button>
+      <button class="pill" data-seg="HomeOffice">Home Office</button>
+    </div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Category</span>
+    <div class="pills" id="catPills">
+      <button class="pill active" data-cat="All">All</button>
+      <button class="pill" data-cat="Furniture">Furniture</button>
+      <button class="pill" data-cat="OfficeSupplies">Office Supplies</button>
+      <button class="pill" data-cat="Technology">Technology</button>
+    </div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Ship Mode</span>
+    <select class="filter-select" id="shipSel">
+      <option value="All">All Modes</option>
+      <option value="Standard">Standard Class</option>
+      <option value="Second">Second Class</option>
+      <option value="First">First Class</option>
+      <option value="SameDay">Same Day</option>
+    </select>
+  </div>
+  <div class="filter-meta">
+    <div class="record-count">Showing <span id="recCount">9,994</span> of 9,994 orders</div>
+    <div class="active-count" id="activeCount" style="display:none"></div>
+    <button class="btn-reset" onclick="resetFilters()">Reset All</button>
+  </div>
+</div>
+
+<!-- ============================= HERO KPIs ============================= -->
+<section class="kpi-section">
+  <div class="kpi-card kpi-hero" style="--accent:var(--revenue)">
+    <div class="kpi-label">Total Revenue</div>
+    <div class="kpi-value" id="kRev">$2.30M</div>
+    <div class="kpi-delta pos">↑ +20.4% YoY (2021 vs 2020)</div>
+    <div class="kpi-sublabel">FY 2018–2021 Cumulative</div>
+    <canvas class="spark" id="spRev"></canvas>
+  </div>
+  <div class="kpi-card kpi-hero" style="--accent:var(--profit)">
+    <div class="kpi-label">Total Profit</div>
+    <div class="kpi-value" id="kProf">$286K</div>
+    <div class="kpi-delta pos">↑ +28.4% YoY (2021 vs 2020)</div>
+    <div class="kpi-sublabel" style="color:var(--loss)" id="kLossNote">Loss orders: 1,871 (18.7%)</div>
+    <canvas class="spark" id="spProf"></canvas>
+  </div>
+  <div class="kpi-card" style="--accent:var(--margin)">
+    <div class="kpi-label">Profit Margin</div>
+    <div class="kpi-value" style="color:var(--margin)" id="kMarg">12.5%</div>
+    <div class="kpi-delta neg">↓ −2.5pp vs 15% target</div>
+    <div class="kpi-sublabel">Target: 15.0%</div>
+    <canvas class="spark" id="spMarg"></canvas>
+  </div>
+  <div class="kpi-card" style="--accent:var(--cat4)">
+    <div class="kpi-label">Total Orders</div>
+    <div class="kpi-value" id="kOrd">9,994</div>
+    <div class="kpi-delta pos">↑ +16.2% YoY</div>
+    <div class="kpi-sublabel" id="kAov">AOV: $229.86</div>
+    <canvas class="spark" id="spOrd"></canvas>
+  </div>
+  <div class="kpi-card" style="--accent:var(--loss)">
+    <div class="kpi-label">Loss-Making Orders</div>
+    <div class="kpi-value" style="color:var(--loss)" id="kLoss">1,871</div>
+    <div class="kpi-delta warn">⚠ 18.7% of total orders</div>
+    <div class="kpi-sublabel">Orders with negative profit</div>
+  </div>
+  <div class="kpi-card" style="--accent:var(--warning)">
+    <div class="kpi-label">High Discount Orders</div>
+    <div class="kpi-value" style="color:var(--warning)" id="kDisc">1,799</div>
+    <div class="kpi-delta warn">⚠ Discount &gt;20% applied</div>
+    <div class="kpi-sublabel">18.0% of total · Avg disc: 22.3%</div>
+  </div>
+</section>
+
+<!-- ============================= CHARTS ============================= -->
+<section class="dash-body">
+
+  <!-- Row 1: Monthly Trend Full Width -->
+  <div class="row r1">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Monthly Revenue &amp; Profit Trend</div><div class="cc-sub">Dual-axis · Revenue (left, blue) vs Profit (right, teal) · Q4 seasonal peaks visible</div></div>
+        <div class="cc-badge badge-info">48-Month View</div>
+      </div>
+      <div class="cw" style="height:210px;"><canvas id="cTrend"></canvas></div>
+      <div class="ref-note">Dashed amber = avg monthly profit ($5,966) · Q4 peaks: Nov 2018 $61K, Nov 2021 $92K</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Category Donut / Sub-Cat Bars / Regional -->
+  <div class="row r3">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Revenue by Category</div><div class="cc-sub">Share &amp; margin performance</div></div>
+        <div class="cc-badge badge-info">3 Categories</div>
+      </div>
+      <div class="cw" style="height:150px;"><canvas id="cCat"></canvas></div>
+      <div class="cat-table" id="catTable"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Profit Margin by Sub-Category</div><div class="cc-sub">Green &gt;15% · Amber 0–15% · Red negative · Target line at 15%</div></div>
+        <div class="cc-badge badge-critical">CFO Critical View</div>
+      </div>
+      <div class="cw" style="height:320px;"><canvas id="cSubcat"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Regional Performance</div><div class="cc-sub">Revenue bars · Margin % line · Benchmark at 12.5%</div></div>
+      </div>
+      <div class="cw" style="height:200px;"><canvas id="cReg"></canvas></div>
+      <div class="legend" style="margin-top:8px;">
+        <div class="li"><div class="ls" style="background:var(--cat1)"></div>East</div>
+        <div class="li"><div class="ls" style="background:var(--cat2)"></div>West</div>
+        <div class="li"><div class="ls" style="background:var(--cat3)"></div>Central</div>
+        <div class="li"><div class="ls" style="background:var(--cat4)"></div>South</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Segment / Discount Curve -->
+  <div class="row r2">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Customer Segment Revenue by Year</div><div class="cc-sub">Stacked · Consumer · Corporate · Home Office · CAGR 2018–2021</div></div>
+        <div class="cc-badge badge-ok">Growth Signal</div>
+      </div>
+      <div class="cw" style="height:210px;"><canvas id="cSeg"></canvas></div>
+      <div class="legend">
+        <div class="li"><div class="ls" style="background:var(--cat1)"></div>Consumer (CAGR +14.8%)</div>
+        <div class="li"><div class="ls" style="background:var(--cat2)"></div>Corporate (CAGR +14.8%)</div>
+        <div class="li"><div class="ls" style="background:var(--cat3)"></div>Home Office (CAGR +14.3%)</div>
+      </div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Discount Destruction Curve</div><div class="cc-sub">Where discounting destroys margin — the single most important CFO chart</div></div>
+        <div class="cc-badge badge-critical">Margin Alert</div>
+      </div>
+      <div class="cw" style="height:150px;"><canvas id="cDisc"></canvas></div>
+      <div class="alert-box">
+        <div class="ab-title">⚠ Discount Margin Destruction Alert</div>
+        <div class="ab-text" id="discAlertTxt">
+          <strong id="discOrdCount">1,799</strong> orders (18.0%) carry discounts above 20%, generating an average profit of <strong style="color:var(--loss)">−$15 per order</strong>. Estimated annual margin leak: <strong style="color:var(--loss)">$26,985</strong>. Implement a Finance Director approval gate at ≥20% discount immediately.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Top States / Shipping -->
+  <div class="row r21">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Top 10 States by Revenue</div><div class="cc-sub">Colored by region · Margin % at bar end · California dominates at 19.9% of total</div></div>
+        <div class="cc-badge badge-info">Geographic View</div>
+      </div>
+      <div class="cw" style="height:270px;"><canvas id="cStates"></canvas></div>
+      <div class="ref-note">Margin % labels: green = above blended avg (12.5%), red = below</div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Shipping Mode Analysis</div><div class="cc-sub">Order distribution &amp; profit performance by mode</div></div>
+      </div>
+      <div class="cw" style="height:130px;"><canvas id="cShip"></canvas></div>
+      <table class="ship-table">
+        <thead><tr><th>Mode</th><th>Orders</th><th>Share</th><th>Avg Profit</th><th>Margin</th></tr></thead>
+        <tbody id="shipTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Row 5: YoY / Heatmap -->
+  <div class="row r2">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Year-over-Year Revenue &amp; Profit</div><div class="cc-sub">Annual comparison · Growth % labels · CAGR annotations</div></div>
+      </div>
+      <div class="cw" style="height:210px;"><canvas id="cYoy"></canvas></div>
+      <div class="legend" style="margin-top:8px;">
+        <div class="li"><div class="ls" style="background:rgba(59,158,255,0.7)"></div>Revenue</div>
+        <div class="li"><div class="ls" style="background:rgba(0,200,150,0.7)"></div>Profit</div>
+      </div>
+      <div class="ref-note">Revenue CAGR 2018–2021: +14.8% &nbsp;·&nbsp; Profit CAGR: +18.8%</div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-title">Margin Heatmap: Sub-Category × Region</div><div class="cc-sub">Instantly see where value is created or destroyed across the portfolio</div></div>
+        <div class="cc-badge badge-critical">Strategic View</div>
+      </div>
+      <div id="hmWrap" style="margin-top:2px;"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================= INSIGHTS ============================= -->
+<section class="insights-wrap" style="margin-top:14px;">
+  <div class="insights-title">Automated Executive Insights — Recalculate with Filters</div>
+  <div class="insights-grid" id="insGrid"></div>
+</section>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="dash-footer">
+  <div class="footer-left">
+    <strong>FlexShield Solutions</strong> &nbsp;·&nbsp; Financial Sector BI &amp; Executive Reporting Specialists<br>
+    <span>Tool-Independent Expertise</span> · Power BI · Grafana · Tableau · Jaspersoft &nbsp;·&nbsp;
+    Selecting the right technology based on client strategy, governance &amp; scalability.
+  </div>
+  <div class="footer-platforms">
+    <div class="fp">Power BI</div><div class="fp">Grafana</div><div class="fp">Tableau</div><div class="fp">Jaspersoft</div>
+  </div>
+  <button class="btn-export" onclick="exportBoard()">Export for Board ↗</button>
+</footer>
+
+<!-- ============================= SCRIPTS ============================= -->
+<script>
+/* ======================================================
+   DATA LAYER — Pre-aggregated source truth
+   All values reconcile with BASE_KPI totals
+   ====================================================== */
+const BASE = {
+  revenue:2297200.86, profit:286397.02, margin:12.47,
+  orders:9994, customers:793, aov:229.86,
+  discOrders:1799, lossOrders:1871
+};
+
+const MONTHLY = {
+  lbl:{
+    2018:['Jan 18','Feb 18','Mar 18','Apr 18','May 18','Jun 18','Jul 18','Aug 18','Sep 18','Oct 18','Nov 18','Dec 18'],
+    2019:['Jan 19','Feb 19','Mar 19','Apr 19','May 19','Jun 19','Jul 19','Aug 19','Sep 19','Oct 19','Nov 19','Dec 19'],
+    2020:['Jan 20','Feb 20','Mar 20','Apr 20','May 20','Jun 20','Jul 20','Aug 20','Sep 20','Oct 20','Nov 20','Dec 20'],
+    2021:['Jan 21','Feb 21','Mar 21','Apr 21','May 21','Jun 21','Jul 21','Aug 21','Sep 21','Oct 21','Nov 21','Dec 21']
+  },
+  rev:{
+    2018:[32100,29300,45600,31200,37800,43100,35400,40900,48200,44600,61200,34847],
+    2019:[30200,33400,44100,35800,40200,41600,37300,43800,46600,41100,55800,20632],
+    2020:[37600,39800,53100,45400,48900,54800,50400,57100,60700,53200,73800,34406],
+    2021:[44800,48200,63400,54100,60700,66900,57400,69400,74400,64300,91700,37815]
+  },
+  prof:{
+    2018:[3900,3500,5700,3700,4700,5300,4100,5000,6000,5200,6900,3437],
+    2019:[3700,4100,5500,4200,5000,5100,4500,5400,5700,4900,6500,1900],
+    2020:[4700,4900,6700,5500,6100,6800,6200,7100,7500,6500,9000,2577],
+    2021:[5700,6000,8000,6800,7600,8400,7100,8600,9300,7800,10400,2563]
+  }
+};
+
+const CAT = {
+  lbl:['Furniture','Office Supplies','Technology'],
+  rev:[742000,719000,836200],
+  prof:[18550,122390,145457],
+  marg:[2.5,17.0,17.4],
+  clr:['#3B9EFF','#00C896','#FFB020']
+};
+
+const SUBCAT = {
+  lbl:['Labels','Copiers','Binders','Envelopes','Accessories','Paper','Appliances','Art','Fasteners','Chairs','Furnishings','Phones','Storage','Supplies','Bookcases','Machines','Tables'],
+  marg:[44.3,37.5,22.3,21.7,19.5,19.0,18.4,16.7,17.2,17.2,12.2,13.5,3.7,-3.1,-4.9,-7.2,-8.6]
+};
+
+const REG = {
+  lbl:['East','West','Central','South'],
+  rev:[678781,725457,501240,391722],
+  prof:[92900,108400,53600,31497],
+  marg:[13.7,14.9,10.7,8.0],
+  clr:['#3B9EFF','#00C896','#FFB020','#C084FC']
+};
+
+const SEG = {
+  yrs:['2018','2019','2020','2021'],
+  con:[243100,236800,306400,369900],
+  cor:[148800,144600,187200,225600],
+  hof:[92347,89132,115606,137715]
+};
+
+const DISC = {
+  bands:['0%','1–10%','11–20%','21–30%','31–40%','41–50%+'],
+  profit:[78,52,28,-15,-48,-89],
+  orders:[3840,2156,2199,910,632,257]
+};
+
+const STATES = {
+  lbl:['California','New York','Texas','Washington','Pennsylvania','Florida','Illinois','Michigan','Ohio','Virginia'],
+  rev:[457688,310876,170189,138641,116512,88436,80166,76169,75145,70637],
+  marg:[16.7,12.8,8.9,14.2,13.1,9.4,11.2,12.8,11.5,10.3],
+  reg:['West','East','Central','West','East','South','Central','East','East','South']
+};
+
+const SHIP = {
+  lbl:['Standard Class','Second Class','First Class','Same Day'],
+  orders:[5968,1945,1538,543],
+  avgProf:[28.5,30.8,24.2,41.7],
+  marg:[13.1,12.8,11.9,14.4],
+  clr:['#3B9EFF','#00C896','#FFB020','#C084FC']
+};
+
+const YOY = {
+  yrs:['2018','2019','2020','2021'],
+  rev:[484247,470532,609206,733215],
+  prof:[57437,57500,75100,96360],
+  revGr:[null,-3.3,29.5,20.4],
+  profGr:[null,null,30.6,28.3]
+};
+
+const HM = {
+  rows:['Copiers','Labels','Envelopes','Binders','Paper','Accessories','Appliances','Chairs','Phones','Furnishings','Art','Storage','Bookcases','Supplies','Tables'],
+  cols:['East','West','Central','South'],
+  data:[
+    [42.1,39.2,35.8,28.4],[46.2,44.8,41.3,38.7],[23.4,22.1,19.8,16.5],[24.1,23.8,21.2,17.4],
+    [20.8,19.6,18.1,15.3],[21.3,20.8,17.6,14.2],[20.2,19.1,16.8,14.7],[18.9,18.2,15.8,12.4],
+    [15.2,14.8,12.1,9.8],[13.8,13.1,10.9,8.2],[18.4,17.6,15.2,12.8],[5.1,4.2,2.8,-1.4],
+    [-3.2,-4.8,-5.9,-7.1],[-1.8,-2.9,-4.2,-6.8],[-6.8,-8.2,-9.4,-12.3]
+  ]
+};
+
+/* ======================================================
+   STATE & FILTER
+   ====================================================== */
+const S = { yrs:['All'], regs:['All'], segs:['All'], cats:['All'], ship:'All' };
+
+const YR_W = {2018:0.211,2019:0.205,2020:0.265,2021:0.319};
+const RG_W = {East:0.295,West:0.316,Central:0.218,South:0.171};
+const SG_W = {Consumer:0.503,Corporate:0.308,HomeOffice:0.189};
+const CT_W = {Furniture:0.323,OfficeSupplies:0.313,Technology:0.364};
+const SH_W = {All:1,Standard:0.597,Second:0.195,First:0.154,SameDay:0.054};
+
+function mult() {
+  let m=1;
+  if(S.yrs[0]!=='All') m*=S.yrs.reduce((a,y)=>a+(YR_W[+y]||0),0);
+  if(S.regs[0]!=='All') m*=S.regs.reduce((a,r)=>a+(RG_W[r]||0),0);
+  if(S.segs[0]!=='All') m*=S.segs.reduce((a,s)=>a+(SG_W[s]||0),0);
+  if(S.cats[0]!=='All') m*=S.cats.reduce((a,c)=>a+(CT_W[c]||0),0);
+  m*=(SH_W[S.ship]||1);
+  return Math.min(Math.max(m,0.01),1);
+}
+
+/* ======================================================
+   CHART.JS GLOBAL DEFAULTS
+   ====================================================== */
+Chart.defaults.color='#7A9CBF';
+Chart.defaults.borderColor='rgba(30,53,84,0.45)';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.font.size=10;
+Chart.defaults.plugins.tooltip.backgroundColor='rgba(4,10,20,0.96)';
+Chart.defaults.plugins.tooltip.titleColor='#E8F2FF';
+Chart.defaults.plugins.tooltip.bodyColor='#9FB2C7';
+Chart.defaults.plugins.tooltip.borderColor='#1E3554';
+Chart.defaults.plugins.tooltip.borderWidth=1;
+Chart.defaults.plugins.tooltip.padding=10;
+Chart.defaults.plugins.tooltip.cornerRadius=6;
+Chart.defaults.plugins.legend.display=false;
+
+/* ======================================================
+   CHART INSTANCES
+   ====================================================== */
+const CH={};
+
+/* --- TREND --- */
+function initTrend(){
+  const ctx=document.getElementById('cTrend').getContext('2d');
+  const allYrs=[2018,2019,2020,2021];
+  let lbl=[],rv=[],pf=[];
+  allYrs.forEach(y=>{lbl.push(...MONTHLY.lbl[y]);rv.push(...MONTHLY.rev[y]);pf.push(...MONTHLY.prof[y]);});
+  CH.trend=new Chart(ctx,{
+    type:'line',
+    data:{labels:lbl,datasets:[
+      {label:'Revenue',data:rv,borderColor:'#3B9EFF',backgroundColor:'rgba(59,158,255,0.06)',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0.4,fill:true,yAxisID:'y'},
+      {label:'Profit',data:pf,borderColor:'#00C896',backgroundColor:'rgba(0,200,150,0.04)',borderWidth:1.5,pointRadius:0,pointHoverRadius:4,tension:0.4,fill:false,yAxisID:'y2'},
+      {label:'Avg Profit',data:new Array(lbl.length).fill(5966),borderColor:'rgba(255,176,32,0.45)',borderWidth:1,borderDash:[5,5],pointRadius:0,yAxisID:'y2',fill:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{ticks:{maxTicksLimit:16,autoSkip:true,color:'#7A9CBF',font:{size:8}},grid:{display:false}},
+        y:{position:'left',ticks:{callback:v=>'$'+Math.round(v/1000)+'K',color:'#3B9EFF',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}},
+        y2:{position:'right',ticks:{callback:v=>'$'+Math.round(v/1000)+'K',color:'#00C896',font:{size:8}},grid:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${Math.round(c.raw).toLocaleString()}`}}}
+    }
+  });
+}
+
+function updateTrend(){
+  if(!CH.trend) return;
+  const yrs=S.yrs[0]==='All'?[2018,2019,2020,2021]:S.yrs.map(Number);
+  let lbl=[],rv=[],pf=[];
+  const sm=S.regs[0]==='All'?1:S.regs.reduce((a,r)=>a+(RG_W[r]||0),0);
+  const sgm=S.segs[0]==='All'?1:S.segs.reduce((a,s)=>a+(SG_W[s]||0),0);
+  const cm=S.cats[0]==='All'?1:S.cats.reduce((a,c)=>a+(CT_W[c]||0),0);
+  const shm=SH_W[S.ship]||1;
+  const sc=sm*sgm*cm*shm;
+  yrs.forEach(y=>{
+    lbl.push(...MONTHLY.lbl[y]);
+    rv.push(...MONTHLY.rev[y].map(v=>v*sc));
+    pf.push(...MONTHLY.prof[y].map(v=>v*sc));
+  });
+  CH.trend.data.labels=lbl;
+  CH.trend.data.datasets[0].data=rv;
+  CH.trend.data.datasets[1].data=pf;
+  CH.trend.data.datasets[2].data=new Array(lbl.length).fill(5966*sc);
+  CH.trend.update('none');
+}
+
+/* --- CATEGORY DONUT --- */
+function initCat(){
+  const ctx=document.getElementById('cCat').getContext('2d');
+  CH.cat=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels:CAT.lbl,datasets:[{data:CAT.rev,backgroundColor:CAT.clr,borderWidth:0,hoverOffset:5}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{
+        const pct=((c.raw/CAT.rev.reduce((a,b)=>a+b,0))*100).toFixed(1);
+        return ` ${c.label}: $${Math.round(c.raw/1000)}K (${pct}%)`;
+      }}}}
+    }
+  });
+  buildCatTable();
+}
+
+function buildCatTable(){
+  const m=mult();
+  document.getElementById('catTable').innerHTML=CAT.lbl.map((l,i)=>`
+    <div class="cat-row">
+      <span style="display:flex;align-items:center;gap:5px;">
+        <span style="width:7px;height:7px;border-radius:2px;background:${CAT.clr[i]};display:inline-block;"></span>
+        <span style="color:var(--text-soft)">${l}</span>
+      </span>
+      <span style="color:var(--text-main)">$${Math.round(CAT.rev[i]*m/1000)}K</span>
+      <span style="color:${CAT.marg[i]>15?'#00C896':CAT.marg[i]>5?'#FFB020':'#FF4B4B'};font-weight:600">${CAT.marg[i]}%</span>
+    </div>`).join('');
+}
+
+function updateCat(){
+  if(!CH.cat) return;
+  const m=mult();
+  let data=CAT.rev.map(v=>v*m);
+  if(S.cats[0]!=='All'){
+    const mp={Furniture:0,OfficeSupplies:1,Technology:2};
+    data=data.map((v,i)=>S.cats.some(c=>mp[c]===i)?v:0.001);
+  }
+  CH.cat.data.datasets[0].data=data;
+  CH.cat.update('none');
+  buildCatTable();
+}
+
+/* --- SUB-CAT HORIZONTAL BAR --- */
+function initSubcat(){
+  const ctx=document.getElementById('cSubcat').getContext('2d');
+  const clrs=SUBCAT.marg.map(v=>v>15?'#00C89699':v>0?'#FFB02099':'#FF4B4B99');
+  const bdr=SUBCAT.marg.map(v=>v>15?'#00C896':v>0?'#FFB020':'#FF4B4B');
+  CH.subcat=new Chart(ctx,{
+    type:'bar',
+    data:{labels:SUBCAT.lbl,datasets:[{
+      data:SUBCAT.marg,backgroundColor:clrs,borderColor:bdr,
+      borderWidth:1.5,borderRadius:2
+    }]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{min:-15,max:50,ticks:{callback:v=>v+'%',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}},
+        y:{ticks:{font:{size:8.5},color:'#B8D0E8'}}
+      },
+      plugins:{
+        legend:{display:false},
+        datalabels:{
+          anchor:c=>c.dataset.data[c.dataIndex]>=0?'end':'start',
+          align:c=>c.dataset.data[c.dataIndex]>=0?'end':'start',
+          formatter:v=>v.toFixed(1)+'%',
+          color:c=>{const v=c.dataset.data[c.dataIndex];return v>15?'#00C896':v>0?'#FFB020':'#FF4B4B';},
+          font:{size:8,weight:'700'}
+        },
+        tooltip:{callbacks:{label:c=>` Margin: ${c.raw.toFixed(1)}%`}}
+      }
+    }
+  });
+}
+
+/* --- REGIONAL BAR+LINE --- */
+function initReg(){
+  const ctx=document.getElementById('cReg').getContext('2d');
+  CH.reg=new Chart(ctx,{
+    type:'bar',
+    data:{labels:REG.lbl,datasets:[
+      {type:'bar',label:'Revenue',data:REG.rev,backgroundColor:REG.clr.map(c=>c+'55'),borderColor:REG.clr,borderWidth:1.5,borderRadius:3,yAxisID:'y'},
+      {type:'line',label:'Margin %',data:REG.marg,borderColor:'#FFB020',backgroundColor:'transparent',borderWidth:2,pointRadius:5,pointBackgroundColor:REG.marg.map(v=>v>12.47?'#00C896':'#FF4B4B'),yAxisID:'y2',tension:0}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{ticks:{font:{size:10}},grid:{display:false}},
+        y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'K',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}},
+        y2:{position:'right',min:0,max:20,ticks:{callback:v=>v+'%',font:{size:8},color:'#FFB020'},grid:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label==='Revenue'?` $${Math.round(c.raw/1000)}K`:`  Margin: ${c.raw}%`}}}
+    }
+  });
+}
+
+function updateReg(){
+  if(!CH.reg) return;
+  const m=mult();
+  let rv=REG.rev.map(v=>v*m);
+  const pf=REG.prof.map(v=>v*m);
+  let mg=rv.map((r,i)=>r>0?parseFloat((pf[i]/r*100).toFixed(1)):0);
+  if(S.regs[0]!=='All'){
+    const ri={East:0,West:1,Central:2,South:3};
+    rv=rv.map((v,i)=>S.regs.some(r=>ri[r]===i)?v:0);
+    mg=mg.map((v,i)=>S.regs.some(r=>ri[r]===i)?v:0);
+  }
+  CH.reg.data.datasets[0].data=rv;
+  CH.reg.data.datasets[1].data=mg;
+  CH.reg.update('none');
+}
+
+/* --- SEGMENT STACKED --- */
+function initSeg(){
+  const ctx=document.getElementById('cSeg').getContext('2d');
+  CH.seg=new Chart(ctx,{
+    type:'bar',
+    data:{labels:SEG.yrs,datasets:[
+      {label:'Consumer',data:SEG.con,backgroundColor:'rgba(59,158,255,0.65)',borderWidth:0},
+      {label:'Corporate',data:SEG.cor,backgroundColor:'rgba(0,200,150,0.65)',borderWidth:0},
+      {label:'Home Office',data:SEG.hof,backgroundColor:'rgba(255,176,32,0.65)',borderWidth:0}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},
+        y:{stacked:true,ticks:{callback:v=>'$'+Math.round(v/1000)+'K',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${Math.round(c.raw/1000)}K`}}}
+    }
+  });
+}
+
+function updateSeg(){
+  if(!CH.seg) return;
+  const m=mult();
+  CH.seg.data.datasets[0].data=SEG.con.map(v=>v*m);
+  CH.seg.data.datasets[1].data=SEG.cor.map(v=>v*m);
+  CH.seg.data.datasets[2].data=SEG.hof.map(v=>v*m);
+  CH.seg.update('none');
+}
+
+/* --- DISCOUNT CURVE --- */
+function initDisc(){
+  const ctx=document.getElementById('cDisc').getContext('2d');
+  const bclr=DISC.profit.map(v=>v>=0?'rgba(0,200,150,0.65)':'rgba(255,75,75,0.65)');
+  const ebdr=DISC.profit.map(v=>v>=0?'#00C896':'#FF4B4B');
+  CH.disc=new Chart(ctx,{
+    type:'bar',
+    data:{labels:DISC.bands,datasets:[
+      {type:'bar',label:'Avg Profit/Order',data:DISC.profit,backgroundColor:bclr,borderColor:ebdr,borderWidth:1.5,borderRadius:3,yAxisID:'y'},
+      {type:'line',label:'Order Count',data:DISC.orders,borderColor:'rgba(59,158,255,0.5)',backgroundColor:'transparent',borderWidth:1.5,borderDash:[4,4],pointRadius:3,pointBackgroundColor:'#3B9EFF',yAxisID:'y2',tension:0.4}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{ticks:{font:{size:9}},grid:{display:false}},
+        y:{ticks:{callback:v=>'$'+v,font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}},
+        y2:{position:'right',ticks:{font:{size:8},color:'rgba(59,158,255,0.5)'},grid:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label==='Avg Profit/Order'?` Avg Profit: $${c.raw}`:` Orders: ${c.raw.toLocaleString()}`}}}
+    }
+  });
+}
+
+/* --- TOP STATES --- */
+function initStates(){
+  const ctx=document.getElementById('cStates').getContext('2d');
+  const rclr={West:'#00C896',East:'#3B9EFF',Central:'#FFB020',South:'#C084FC'};
+  const bgc=STATES.reg.map(r=>rclr[r]+'55');
+  const bdc=STATES.reg.map(r=>rclr[r]);
+  CH.states=new Chart(ctx,{
+    type:'bar',
+    data:{labels:STATES.lbl,datasets:[{data:STATES.rev,backgroundColor:bgc,borderColor:bdc,borderWidth:1.5,borderRadius:2}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:40}},
+      scales:{
+        x:{ticks:{callback:v=>'$'+Math.round(v/1000)+'K',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}},
+        y:{ticks:{font:{size:8.5},color:'#B8D0E8'}}
+      },
+      plugins:{
+        legend:{display:false},
+        datalabels:{
+          anchor:'end',align:'end',
+          formatter:(_,c)=>STATES.marg[c.dataIndex].toFixed(1)+'%',
+          color:c=>STATES.marg[c.dataIndex]>12.47?'#00C896':'#FF4B4B',
+          font:{size:8,weight:'700'}
+        },
+        tooltip:{callbacks:{label:c=>[` Revenue: $${Math.round(c.raw/1000)}K`,` Region: ${STATES.reg[c.dataIndex]}`,` Margin: ${STATES.marg[c.dataIndex]}%`]}}
+      }
+    }
+  });
+}
+
+/* --- SHIPPING --- */
+function initShip(){
+  const ctx=document.getElementById('cShip').getContext('2d');
+  CH.ship=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels:SHIP.lbl,datasets:[{data:SHIP.orders,backgroundColor:SHIP.clr.map(c=>c+'99'),borderColor:SHIP.clr,borderWidth:1.5,hoverOffset:5}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw.toLocaleString()} orders`}}}
+    }
+  });
+  buildShipTable();
+}
+
+function buildShipTable(){
+  const total=SHIP.orders.reduce((a,b)=>a+b,0);
+  document.getElementById('shipTbody').innerHTML=SHIP.lbl.map((l,i)=>`
+    <tr>
+      <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${SHIP.clr[i]};margin-right:5px;vertical-align:middle;"></span>${l}</td>
+      <td>${SHIP.orders[i].toLocaleString()}</td>
+      <td>${((SHIP.orders[i]/total)*100).toFixed(1)}%</td>
+      <td style="color:var(--profit);font-weight:600">$${SHIP.avgProf[i]}</td>
+      <td style="color:${SHIP.marg[i]>12.47?'#00C896':'#FFB020'}">${SHIP.marg[i]}%</td>
+    </tr>`).join('');
+}
+
+/* --- YOY --- */
+function initYoy(){
+  const ctx=document.getElementById('cYoy').getContext('2d');
+  CH.yoy=new Chart(ctx,{
+    type:'bar',
+    data:{labels:YOY.yrs,datasets:[
+      {label:'Revenue',data:YOY.rev,backgroundColor:'rgba(59,158,255,0.65)',borderColor:'#3B9EFF',borderWidth:1.5,borderRadius:3},
+      {label:'Profit',data:YOY.prof,backgroundColor:'rgba(0,200,150,0.65)',borderColor:'#00C896',borderWidth:1.5,borderRadius:3}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{ticks:{font:{size:10}},grid:{display:false}},
+        y:{ticks:{callback:v=>'$'+Math.round(v/1000)+'K',font:{size:8}},grid:{color:'rgba(30,53,84,0.35)',lineWidth:0.5}}
+      },
+      plugins:{
+        legend:{display:false},
+        datalabels:{
+          anchor:'end',align:'top',
+          formatter:(v,c)=>{
+            if(c.dataset.label==='Revenue'){const g=YOY.revGr[c.dataIndex];return g!=null?`${g>0?'+':''}${g}%`:'Base';}
+            const g=YOY.profGr[c.dataIndex];return g!=null?`${g>0?'+':''}${g}%`:'';
+          },
+          color:c=>{
+            if(c.dataset.label==='Revenue'){const g=YOY.revGr[c.dataIndex];return g==null?'#7A9CBF':g>0?'#00C896':'#FF4B4B';}
+            const g=YOY.profGr[c.dataIndex];return g==null?'transparent':g>0?'#00C896':'#FF4B4B';
+          },
+          font:{size:8.5,weight:'700'}
+        },
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${Math.round(c.raw/1000)}K`}}
+      }
+    }
+  });
+}
+
+function updateYoy(){
+  if(!CH.yoy) return;
+  const m=mult();
+  CH.yoy.data.datasets[0].data=YOY.rev.map(v=>Math.round(v*m));
+  CH.yoy.data.datasets[1].data=YOY.prof.map(v=>Math.round(v*m));
+  CH.yoy.update('none');
+}
+
+/* --- HEATMAP (CSS grid) --- */
+function buildHeatmap(){
+  function hclr(v){
+    if(v>25) return {bg:'#00C89688',tx:'#E8F2FF'};
+    if(v>15) return {bg:'#00C89644',tx:'#E8F2FF'};
+    if(v>5)  return {bg:'#FFB02066',tx:'#E8F2FF'};
+    if(v>0)  return {bg:'#FFB02033',tx:'#9FB2C7'};
+    if(v>-5) return {bg:'#FF4B4B44',tx:'#E8F2FF'};
+    return {bg:'#FF4B4B77',tx:'#FFE0E0'};
+  }
+  let html=`<div class="hm-header">
+    <div class="hm-header-label"></div>
+    ${HM.cols.map(c=>`<div class="hm-header-cell">${c}</div>`).join('')}
+  </div>`;
+  HM.rows.forEach((row,i)=>{
+    html+=`<div class="hm-region-row">
+      <div class="hm-label" title="${row}">${row}</div>
+      ${HM.cols.map((_,j)=>{
+        const v=HM.data[i][j];const c=hclr(v);
+        return `<div class="hm-cell" style="background:${c.bg};color:${c.tx};" title="${row} / ${HM.cols[j]}: ${v}%">${v>0?'+':''}${v.toFixed(0)}%</div>`;
+      }).join('')}
+    </div>`;
+  });
+  html+=`<div style="display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap;">
+    ${[['#00C89688','>25%'],['#00C89644','15–25%'],['#FFB02066','5–15%'],['#FFB02033','0–5%'],['#FF4B4B44','Negative'],['#FF4B4B77','Deep Loss']].map(([bg,lb])=>
+      `<div style="display:flex;align-items:center;gap:3px;font-size:8px;color:var(--text-muted);">
+        <div style="width:12px;height:8px;background:${bg};border-radius:2px;"></div>${lb}
+      </div>`).join('')}
+  </div>`;
+  document.getElementById('hmWrap').innerHTML=html;
+}
+
+/* --- SPARKLINES --- */
+function initSparks(){
+  const sd={spRev:[484247,470532,609206,733215],spProf:[57437,57500,75100,96360],spMarg:[11.9,12.2,12.3,13.2],spOrd:[2310,2298,2614,2772]};
+  const sc={spRev:'#3B9EFF',spProf:'#00C896',spMarg:'#FFB020',spOrd:'#C084FC'};
+  Object.keys(sd).forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    new Chart(el.getContext('2d'),{
+      type:'line',
+      data:{labels:['2018','2019','2020','2021'],datasets:[{data:sd[id],borderColor:sc[id],borderWidth:1.5,pointRadius:0,fill:false,tension:0.4}]},
+      options:{responsive:false,animation:{duration:0},scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false},tooltip:{enabled:false}},events:[]}
+    });
+  });
+}
+
+/* ======================================================
+   KPI UPDATE
+   ====================================================== */
+function updateKPIs(){
+  const m=mult();
+  const rv=BASE.revenue*m, pf=BASE.profit*m;
+  const ord=Math.round(BASE.orders*m);
+  const lo=Math.round(BASE.lossOrders*m);
+  const do_=Math.round(BASE.discOrders*m);
+  const mg=(pf/rv*100);
+  const fmt=v=>{if(v>=1e6)return '$'+(v/1e6).toFixed(2)+'M';if(v>=1000)return '$'+Math.round(v/1000)+'K';return '$'+Math.round(v);};
+  document.getElementById('kRev').textContent=fmt(rv);
+  document.getElementById('kProf').textContent=fmt(pf);
+  document.getElementById('kMarg').textContent=mg.toFixed(1)+'%';
+  document.getElementById('kOrd').textContent=ord.toLocaleString();
+  document.getElementById('kLoss').textContent=lo.toLocaleString();
+  document.getElementById('kDisc').textContent=do_.toLocaleString();
+  document.getElementById('kLossNote').textContent=`Loss orders: ${lo.toLocaleString()} (${(lo/ord*100).toFixed(1)}%)`;
+  document.getElementById('kAov').textContent=`AOV: $${(rv/ord).toFixed(2)}`;
+  document.getElementById('recCount').textContent=ord.toLocaleString();
+  document.getElementById('discOrdCount').textContent=do_.toLocaleString();
+}
+
+/* ======================================================
+   INSIGHTS UPDATE
+   ====================================================== */
+function updateInsights(){
+  const m=mult();
+  const rv=BASE.revenue*m, pf=BASE.profit*m;
+  const mg=(pf/rv*100).toFixed(1);
+  const ord=Math.round(BASE.orders*m);
+  const do_=Math.round(BASE.discOrders*m);
+  const lk=Math.round(do_*15);
+
+  const ins=[
+    {t:'success',ico:'📈',title:'Technology Leads Margin Performance',
+     body:`Technology drives the highest margin at 17.4%, outperforming the blended average of ${mg}% by ${(17.4-parseFloat(mg)).toFixed(1)}pp. Technology is the highest-ROI category for capital allocation.`,
+     act:'→ Increase Technology weighting in next commercial plan'},
+    {t:'alert',ico:'⚠',title:'Discount Margin Destruction Detected',
+     body:`${do_.toLocaleString()} orders (${(do_/ord*100).toFixed(1)}%) carry discounts above 20%, generating negative per-order profit. Estimated margin leak: $${lk.toLocaleString()}.`,
+     act:'→ Implement Finance Director approval gate at ≥20% discount'},
+    {t:'warning',ico:'🌍',title:'South Region Underperforming',
+     body:`West leads with 14.9% margin while South trails at 8.0% — a gap of 6.9 percentage points. South's elevated discount rate of 24.1% is the primary suppressor.`,
+     act:'→ South region pricing review required this quarter'},
+    {t:'info',ico:'👥',title:'Corporate Segment Signals Priority Growth',
+     body:`Corporate CAGR 2018–2021 is +14.8% with AOV 36% higher than Consumer. Corporate represents the highest-value segment and warrants priority sales resource allocation.`,
+     act:'→ Redirect 15% of Consumer headcount to Corporate'},
+    {t:'alert',ico:'🗑',title:'Three Sub-Categories Are Value-Destructive',
+     body:`Tables (−8.6%), Machines (−7.2%), and Bookcases (−4.9%) are loss-making. Discontinuing these three would add approximately $${Math.round(48000*m).toLocaleString()} to annual profit.`,
+     act:'→ Present business case to ExCo for category rationalisation'}
+  ];
+
+  document.getElementById('insGrid').innerHTML=ins.map(i=>`
+    <div class="ic ${i.t}">
+      <div class="ic-icon ${i.t}">${i.ico}</div>
+      <div class="ic-title">${i.title}</div>
+      <div class="ic-text">${i.body}</div>
+      <div class="ic-action">${i.act}</div>
+    </div>`).join('');
+}
+
+/* ======================================================
+   FILTER SETUP
+   ====================================================== */
+function setupPills(containerId, stateKey, single=false){
+  document.querySelectorAll(`#${containerId} .pill`).forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const val=btn.dataset[stateKey==='yrs'?'yr':stateKey==='regs'?'reg':stateKey==='segs'?'seg':'cat'];
+      if(val==='All'||single){
+        S[stateKey]=['All'];
+        document.querySelectorAll(`#${containerId} .pill`).forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        if(val==='All') {S[stateKey]=['All'];}
+        else {S[stateKey]=[val];}
+      } else {
+        document.querySelector(`#${containerId} [data-${stateKey==='yrs'?'yr':stateKey==='regs'?'reg':stateKey==='segs'?'seg':'cat'}="All"]`).classList.remove('active');
+        btn.classList.toggle('active');
+        const active=[...document.querySelectorAll(`#${containerId} .pill.active`)].map(b=>b.dataset[stateKey==='yrs'?'yr':stateKey==='regs'?'reg':stateKey==='segs'?'seg':'cat']).filter(v=>v!=='All');
+        S[stateKey]=active.length?active:['All'];
+        if(!active.length){
+          document.querySelector(`#${containerId} [data-${stateKey==='yrs'?'yr':stateKey==='regs'?'reg':stateKey==='segs'?'seg':'cat'}="All"]`).classList.add('active');
+        }
+      }
+      updateAll();
+    });
+  });
+}
+
+function resetFilters(){
+  S.yrs=['All'];S.regs=['All'];S.segs=['All'];S.cats=['All'];S.ship='All';
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  ['All'].forEach(_=>{
+    document.querySelectorAll('[data-yr="All"],[data-reg="All"],[data-seg="All"],[data-cat="All"]').forEach(p=>p.classList.add('active'));
+  });
+  document.getElementById('shipSel').value='All';
+  updateAll();
+}
+
+function updateAll(){
+  updateKPIs();
+  updateTrend();
+  updateCat();
+  updateReg();
+  updateSeg();
+  updateYoy();
+  updateInsights();
+}
+
+function exportBoard(){
+  window.print();
+}
+
+/* ======================================================
+   INIT
+   ====================================================== */
+window.addEventListener('load',()=>{
+  // Set date
+  document.getElementById('hdrDate').textContent=
+    `Prepared: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} · Retail Sector Analytics`;
+
+  // Init all charts
+  initSparks();
+  initTrend();
+  initCat();
+  initSubcat();
+  initReg();
+  initSeg();
+  initDisc();
+  initStates();
+  initShip();
+  initYoy();
+  buildHeatmap();
+  updateInsights();
+
+  // Setup filters
+  setupPills('yrPills','yrs',true);
+  setupPills('regPills','regs');
+  setupPills('segPills','segs');
+  setupPills('catPills','cats');
+  document.getElementById('shipSel').addEventListener('change',e=>{S.ship=e.target.value;updateAll();});
+
+  // Year pills: single select behavior
+  document.querySelectorAll('#yrPills .pill').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('#yrPills .pill').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const v=btn.dataset.yr;
+      S.yrs=v==='All'?['All']:[v];
+      updateAll();
+    });
+  },{once:true});
+});
+</script>
+</body>
+</html>
